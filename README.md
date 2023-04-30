@@ -157,7 +157,7 @@ python main.py --episodes=3 --groups=1 --target_group=4 --restore_agent=".\saved
 
 - Restore saved model and keep training on group 5 for 500 episodes
 ```
-python main.py --episodes200 --groups=1 --target_group=5 --save-episodes=100 --restore_agent=".\saved_model\group4-200" --save_agent=".\saved_model\group5-500\group5-500"
+python main.py --episodes=200 --groups=1 --target_group=5 --save-episodes=100 --restore_agent=".\saved_model\group4-200" --save_agent=".\saved_model\group5-500\group5-500"
 ```
 
 - Execute a single query 
