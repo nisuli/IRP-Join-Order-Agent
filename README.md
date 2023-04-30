@@ -6,25 +6,52 @@ In practice, a typical database system can execute an SQL query in multiple ways
 
 To address this challenge, several techniques have been proposed, including ReJoin, DQ, SkinnerDB, and RTOS. These techniques employ various machine learning algorithms, such as deep reinforcement learning and tree-LSTM, to identify the most efficient join order sequence. While some studies employ complex structures, such as LSTM techniques, others use simpler structures.
 
-- ReJoin: Deep Reinforcement Learning for Join Order Enumeration 
-    * aiDM’18
-    * 10 June 2018
-    * Marcus, R., & Papaemmanouil, O.
-
-- DQ: Learning to Optimize Join Series With Deep Reinforcement Learning
-    * arXiv:1808.03196v2 [cs.DB]
-    * 10 January 2019
-    * Krishnan, S., Yang, Z., Goldberg, K., Hellerstein, J., & Stoica, I.
-
-- SkinnerDB: Regret-Bounded Query Evaluation via Reinforcement Learning
-    * arXiv:1901.05152v1 [cs.DB]
-    * 16 January 2019
-    * Trummer, I., Wang, J., Wei, Z., Maram, D., Moseley, S., Jo, S., ... & Rayabhari, A.
-
-- RTOS: Reinforcement Learning with Tree-LSTM for Join Order Selection
-    * 2020 IEEE 36th International Conference on Data Engineering (ICDE)
-    * 20-24 April 2020
-    * Yu, X., Li, G., Chai, C., & Tang, N.
+<table>
+  <tr>
+    <th>Reference</th>
+    <th>Details</th>
+  </tr>
+  <tr>
+    <td>ReJoin: Deep Reinforcement Learning for Join Order Enumeration</td>
+    <td>
+        <ul>
+            <li>aiDM’18</li>
+            <li>10 June 2018</li>
+            <li>Marcus, R., &amp; Papaemmanouil, O.</li>
+        </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>DQ: Learning to Optimize Join Series With Deep Reinforcement Learning</td>
+    <td>
+        <ul>
+            <li>arXiv:1808.03196v2 [cs.DB]</li>
+            <li>10 January 2019</li>
+            <li>Krishnan, S., Yang, Z., Goldberg, K., Hellerstein, J., &amp; Stoica, I.</li>
+        </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>SkinnerDB: Regret-Bounded Query Evaluation via Reinforcement Learning</td>
+    <td>
+        <ul>
+            <li>arXiv:1901.05152v1 [cs.DB]</li>
+            <li>16 January 2019</li>
+            <li>Trummer, I., Wang, J., Wei, Z., Maram, D., Moseley, S., Jo, S., ... &amp; Rayabhari, A.</li>
+        </ul>
+    </td>
+  </tr>
+  <tr>
+    <td>RTOS: Reinforcement Learning with Tree-LSTM for Join Order Selection</td>
+    <td>
+        <ul>
+            <li>2020 IEEE 36th International Conference on Data Engineering (ICDE)</li>
+            <li>20-24 April 2020</li>
+            <li>Yu, X., Li, G., Chai, C., &amp; Tang, N.</li>
+        </ul>
+    </td>
+  </tr>
+</table>
 
 This repository aims to study the join ordering problem and estimate the complexity of join planning by addressing each step in detail and one by one.
 
