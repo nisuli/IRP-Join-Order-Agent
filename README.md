@@ -179,8 +179,8 @@ python main.py --query 3a --episodes 150
 <tr><td>Incremental Mode</td><td><code>-m</code>, <code>--mode</code></td><td><code>round</code></td><td>Specifies the incremental mode to use.</td></tr>
 <tr><td>Maximum number of timesteps per episode</td><td><code>-ti</code>, <code>--max-timesteps</code></td><td><code>20</code></td><td>Specifies the maximum number of timesteps per episode.</td></tr>
 <tr><td>Run specific query</td><td><code>-q</code>, <code>--query</code></td><td><code>""</code></td><td>Specifies the query to run.</td></tr>
-<tr><td>Save agent to this dir</td><td><code>-s</code>, <code>--save_agent</code></td><td></td><td>Specifies the directory to save the agent to.</td></tr>
-<tr><td>Restore Agent from this dir</td><td><code>-r</code>, <code>--restore_agent</code></td><td></td><td>Specifies the directory to restore the agent from.</td></tr>
+<tr><td>Save agent to this dir</td><td><code>-s</code>, <code>--save_agent</code></td><td><code>None</code></td><td>Specifies the directory to save the agent to.</td></tr>
+<tr><td>Restore Agent from this dir</td><td><code>-r</code>, <code>--restore_agent</code></td><td><code>None</code></td><td>Specifies the directory to restore the agent from.</td></tr>
 <tr><td>Test agent without learning (use deterministic)</td><td><code>-t</code>, <code>--testing</code></td><td>action=<code>store_true</code> default=<code>False</code></td><td>Specifies whether to test the agent without learning.</td></tr>
 <tr><td>Order queries by relations_num</td><td><code>-all</code>, <code>--run_all</code></td><td><code>False</code></td><td>Specifies whether to order queries by the number of relations.</td></tr>
 <tr><td>Save agent every x episodes</td><td><code>-se</code>, <code>--save-episodes</code></td><td><code>100</code></td><td>Specifies the frequency at which to save the agent during training.</td></tr>
