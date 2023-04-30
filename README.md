@@ -183,7 +183,7 @@ python main.py --query=3a --episodes=150
 <tr><td>Restore Agent from this dir</td><td><code>-r</code>, <code>--restore_agent</code></td><td><code>None</code></td><td>Specifies the directory to restore the agent from.</td></tr>
 <tr><td>Test agent without learning (use deterministic)</td><td><code>-t</code>, <code>--testing</code></td><td>action=<code>store_true</code> default=<code>False</code></td><td>Specifies whether to test the agent without learning.</td></tr>
 <tr><td>Order queries by relations_num</td><td><code>-all</code>, <code>--run_all</code></td><td><code>False</code></td><td>Specifies whether to order queries by the number of relations.</td></tr>
-<tr><td>Save agent every x episodes</td><td><code>-se</code>, <code>--save-episodes</code></td><td><code>100</code></td><td>Specifies the frequency at which to save the agent during training.</td></tr>
+<tr><td>Saved agent episodes number</td><td><code>-se</code>, <code>--save_episodes</code></td><td><code>100</code></td><td>Specifies the episodes number of saved agent during training.</td></tr>
 <tr><td>Select phase (1 or 2)</td><td><code>-p</code>, <code>--phase</code></td><td><code>1</code></td><td>Specifies the training phase to run.</td>
 </tr>
 </tbody>
