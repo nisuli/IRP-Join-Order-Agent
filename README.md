@@ -6,52 +6,25 @@ In practice, a typical database system can execute an SQL query in multiple ways
 
 To address this challenge, several techniques have been proposed, including ReJoin, DQ, SkinnerDB, and RTOS. These techniques employ various machine learning algorithms, such as deep reinforcement learning and tree-LSTM, to identify the most efficient join order sequence. While some studies employ complex structures, such as LSTM techniques, others use simpler structures.
 
-<table>
-  <tr>
-    <th>Reference</th>
-    <th>Details</th>
-  </tr>
-  <tr>
-    <td>ReJoin: Deep Reinforcement Learning for Join Order Enumeration</td>
-    <td>
-        <ul>
-            <li>aiDM’18</li>
-            <li>10 June 2018</li>
-            <li>Marcus, R., &amp; Papaemmanouil, O.</li>
-        </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>DQ: Learning to Optimize Join Series With Deep Reinforcement Learning</td>
-    <td>
-        <ul>
-            <li>arXiv:1808.03196v2 [cs.DB]</li>
-            <li>10 January 2019</li>
-            <li>Krishnan, S., Yang, Z., Goldberg, K., Hellerstein, J., &amp; Stoica, I.</li>
-        </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>SkinnerDB: Regret-Bounded Query Evaluation via Reinforcement Learning</td>
-    <td>
-        <ul>
-            <li>arXiv:1901.05152v1 [cs.DB]</li>
-            <li>16 January 2019</li>
-            <li>Trummer, I., Wang, J., Wei, Z., Maram, D., Moseley, S., Jo, S., ... &amp; Rayabhari, A.</li>
-        </ul>
-    </td>
-  </tr>
-  <tr>
-    <td>RTOS: Reinforcement Learning with Tree-LSTM for Join Order Selection</td>
-    <td>
-        <ul>
-            <li>2020 IEEE 36th International Conference on Data Engineering (ICDE)</li>
-            <li>20-24 April 2020</li>
-            <li>Yu, X., Li, G., Chai, C., &amp; Tang, N.</li>
-        </ul>
-    </td>
-  </tr>
-</table>
+- ReJoin: Deep Reinforcement Learning for Join Order Enumeration 
+    * aiDM’18
+    * 10 June 2018
+    * Marcus, R., & Papaemmanouil, O.
+
+- DQ: Learning to Optimize Join Series With Deep Reinforcement Learning
+    * arXiv:1808.03196v2 [cs.DB]
+    * 10 January 2019
+    * Krishnan, S., Yang, Z., Goldberg, K., Hellerstein, J., & Stoica, I.
+
+- SkinnerDB: Regret-Bounded Query Evaluation via Reinforcement Learning
+    * arXiv:1901.05152v1 [cs.DB]
+    * 16 January 2019
+    * Trummer, I., Wang, J., Wei, Z., Maram, D., Moseley, S., Jo, S., ... & Rayabhari, A.
+
+- RTOS: Reinforcement Learning with Tree-LSTM for Join Order Selection
+    * 2020 IEEE 36th International Conference on Data Engineering (ICDE)
+    * 20-24 April 2020
+    * Yu, X., Li, G., Chai, C., & Tang, N.
 
 This repository aims to study the join ordering problem and estimate the complexity of join planning by addressing each step in detail and one by one.
 
@@ -144,7 +117,7 @@ In addition to these efforts, several experiments were conducted by modifying th
 
 - Train target group 4 for 200 episodes
 ```
-python run.py --episodes=200 --groups=1 --target_group=4 --save-episodes=100 --save_agent=".\saved_model\group4-200\group4-200"
+python main.py -e 200 -g 1 -tg 4 -se 100 -s ./saved_model/group4-200/
 ```
 
 Now the plots are in ./outputs folder (default) and the model in  ./saved_model/ 
@@ -152,17 +125,17 @@ Now the plots are in ./outputs folder (default) and the model in  ./saved_model/
 
 - Restore saved model and test group 4 
 ```
-python run.py --episodes=3 --groups=1 --target_group=4 --restore_agent=".\saved_model\group4-200" --testing --outputs=".\outputs\testing\"
+python main.py -e 3 -g 1 -tg 4 -r ./saved_model/group4-200/ --testing -o ./outputs/testing/
 ```
 
 - Restore saved model and keep training on group 5 for 500 episodes
 ```
-python run.py --episodes=200 --groups=1 --target_group=5 --save_episodes=200 --restore_agent=".\saved_model\group4-200" --save_agent=".\saved_model\group5-500\group5-500"
+python main.py -e 200 -g 1 -tg 5 -se 100 -r ./saved_model/group4-200/ -s ./saved_model/group5-500/
 ```
 
 - Execute a single query 
 ```
-python run.py --query=3a --episodes=150
+python main.py --query 3a --episodes 150
 ```
 
 ### Program parameters
@@ -179,11 +152,11 @@ python run.py --query=3a --episodes=150
 <tr><td>Incremental Mode</td><td><code>-m</code>, <code>--mode</code></td><td><code>round</code></td><td>Specifies the incremental mode to use.</td></tr>
 <tr><td>Maximum number of timesteps per episode</td><td><code>-ti</code>, <code>--max-timesteps</code></td><td><code>20</code></td><td>Specifies the maximum number of timesteps per episode.</td></tr>
 <tr><td>Run specific query</td><td><code>-q</code>, <code>--query</code></td><td><code>""</code></td><td>Specifies the query to run.</td></tr>
-<tr><td>Save agent to this dir</td><td><code>-s</code>, <code>--save_agent</code></td><td><code>None</code></td><td>Specifies the directory to save the agent to.</td></tr>
-<tr><td>Restore Agent from this dir</td><td><code>-r</code>, <code>--restore_agent</code></td><td><code>None</code></td><td>Specifies the directory to restore the agent from.</td></tr>
+<tr><td>Save agent to this dir</td><td><code>-s</code>, <code>--save_agent</code></td><td></td><td>Specifies the directory to save the agent to.</td></tr>
+<tr><td>Restore Agent from this dir</td><td><code>-r</code>, <code>--restore_agent</code></td><td></td><td>Specifies the directory to restore the agent from.</td></tr>
 <tr><td>Test agent without learning (use deterministic)</td><td><code>-t</code>, <code>--testing</code></td><td>action=<code>store_true</code> default=<code>False</code></td><td>Specifies whether to test the agent without learning.</td></tr>
 <tr><td>Order queries by relations_num</td><td><code>-all</code>, <code>--run_all</code></td><td><code>False</code></td><td>Specifies whether to order queries by the number of relations.</td></tr>
-<tr><td>Saved agent episodes number</td><td><code>-se</code>, <code>--save_episodes</code></td><td><code>100</code></td><td>Specifies the episodes number of saved agent during training.</td></tr>
+<tr><td>Save agent every x episodes</td><td><code>-se</code>, <code>--save-episodes</code></td><td><code>100</code></td><td>Specifies the frequency at which to save the agent during training.</td></tr>
 <tr><td>Select phase (1 or 2)</td><td><code>-p</code>, <code>--phase</code></td><td><code>1</code></td><td>Specifies the training phase to run.</td>
 </tr>
 </tbody>
