@@ -144,7 +144,7 @@ In addition to these efforts, several experiments were conducted by modifying th
 
 - Train target group 4 for 200 episodes
 ```
-python main.py --episodes=200 --groups=1 --target_group=4 --save-episodes=100 --save_agent=".\saved_model\group4-200\group4-200"
+python run.py --episodes=200 --groups=1 --target_group=4 --save-episodes=100 --save_agent=".\saved_model\group4-200\group4-200"
 ```
 
 Now the plots are in ./outputs folder (default) and the model in  ./saved_model/ 
@@ -152,17 +152,17 @@ Now the plots are in ./outputs folder (default) and the model in  ./saved_model/
 
 - Restore saved model and test group 4 
 ```
-python main.py --episodes=3 --groups=1 --target_group=4 --restore_agent=".\saved_model\group4-200" --testing --outputs=".\outputs\testing\"
+python run.py --episodes=3 --groups=1 --target_group=4 --restore_agent=".\saved_model\group4-200" --testing --outputs=".\outputs\testing\"
 ```
 
 - Restore saved model and keep training on group 5 for 500 episodes
 ```
-python main.py --episodes=200 --groups=1 --target_group=5 --save_episodes=200 --restore_agent=".\saved_model\group4-200" --save_agent=".\saved_model\group5-500\group5-500"
+python run.py --episodes=200 --groups=1 --target_group=5 --save_episodes=200 --restore_agent=".\saved_model\group4-200" --save_agent=".\saved_model\group5-500\group5-500"
 ```
 
 - Execute a single query 
 ```
-python main.py --query=3a --episodes=150
+python run.py --query=3a --episodes=150
 ```
 
 ### Program parameters
