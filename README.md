@@ -117,7 +117,7 @@ In addition to these efforts, several experiments were conducted by modifying th
 
 - Train target group 4 for 200 episodes
 ```
-python main.py -e 200 -g 1 -tg 4 -se 100 -s ./saved_model/group4-200/
+python run.py -e 200 -g 1 -tg 4 -se 100 -s ./saved_model/group4-200/
 ```
 
 Now the plots are in ./outputs folder (default) and the model in  ./saved_model/ 
@@ -125,17 +125,17 @@ Now the plots are in ./outputs folder (default) and the model in  ./saved_model/
 
 - Restore saved model and test group 4 
 ```
-python main.py -e 3 -g 1 -tg 4 -r ./saved_model/group4-200/ --testing -o ./outputs/testing/
+python run.py -e 3 -g 1 -tg 4 -r ./saved_model/group4-200/ --testing -o ./outputs/testing/
 ```
 
 - Restore saved model and keep training on group 5 for 500 episodes
 ```
-python main.py -e 200 -g 1 -tg 5 -se 100 -r ./saved_model/group4-200/ -s ./saved_model/group5-500/
+python run.py -e 200 -g 1 -tg 5 -se 100 -r ./saved_model/group4-200/ -s ./saved_model/group5-500/
 ```
 
 - Execute a single query 
 ```
-python main.py --query 3a --episodes 150
+python run.py --query 3a --episodes 150
 ```
 
 ### Program parameters
