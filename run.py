@@ -164,24 +164,25 @@ def main():
     ##########################################################################
     report_episodes = 1 # Number of reports to generate during training/testing
 
-    
     def episode_finished(r):
-        # Check if it is time to generate a report
         if r.episode % report_episodes == 0:
-            if args.save_agent != "" and args.testing is False and r.episode == (args.episodes + args.save_episodes):
+            print('Directory of save agent model: ' + str(args.save_agent))
+            print('Is this a testing??? ---> ' + str(args.testing))
+            print('Number of episodes: ' + str(r.episode))
+            print('Total desired episodes: ' + str(args.episodes))
+            print('Save the model after this number: ' + str(args.save_episodes))
+            if args.save_agent != "" and args.testing is False and r.episode >= args.save_episodes:
                 save_dir = os.path.dirname(args.save_agent)
-                if os.path.isdir(save_dir):
+                if not os.path.isdir(save_dir):
                     try:
                         os.mkdir(save_dir, 0o755)
                     except OSError:
                         raise OSError("Cannot save agent to dir {} ()".format(save_dir))
-                    
-                # Save the trained model
-                r.agent.save_model(
-                    directory=args.save_agent, append_timestep=True
-                )
 
-            # Print out the episode reward and the average reward over the last 100 episodes
+                    r.agent.save_model(
+                        directory=args.save_agent, append_timestep=True
+                    )
+
             logger.info(
                 "Episode {ep} reward: {r}".format(ep=r.episode, r=r.episode_rewards[-1])
             )
