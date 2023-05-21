@@ -1,0 +1,39 @@
+{
+    "type": "ppo_agent",
+
+    "update_mode": {
+        "unit": "episodes",
+        "batch_size": 128,
+        "frequency": 8
+    },
+    "memory": {
+        "type": "replay",
+        "include_next_states": false,
+        "capacity": 100000
+    },
+
+    "step_optimizer": {
+        "type": "rmsprop",
+        "learning_rate": 5e-4
+    },
+    "actions_exploration": {
+        "type": "epsilon_anneal",
+        "initial_epsilon": 0.7,
+        "final_epsilon": 0.1,
+        "timesteps": 50000
+    },
+
+    "summarizer": {
+        "directory": "./board",
+        "steps": 100,
+        "labels": [
+            "graph",
+            "gradients_scalar",
+            "regularization",
+            "inputs",
+            "losses",
+            "variables",
+            "total-loss"
+        ]
+    }
+}

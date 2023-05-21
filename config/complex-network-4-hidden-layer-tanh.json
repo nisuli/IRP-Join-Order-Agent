@@ -1,0 +1,107 @@
+[
+    [
+        {
+            "type": "input",
+            "names": ["tree_structure"]
+        },
+        {
+            "type": "dense",
+            "size": 512,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 256,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 128,
+            "activation": "tanh"
+        },
+        {
+            "type": "output",
+            "name": "tree_structure_emb"
+        }
+    ],
+    [
+        {
+            "type": "input",
+            "names": ["join_predicates"]
+        },
+        {
+            "type": "dense",
+            "size": 512,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 256,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 128,
+            "activation": "tanh"
+        },
+        {
+            "type": "output",
+            "name": "join_predicates_emb"
+        }
+    ],
+    [
+        {
+            "type": "input",
+            "names": ["selection_predicates"]
+        },
+        {
+            "type": "dense",
+            "size": 512,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 256,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 128,
+            "activation": "tanh"
+        },
+        {
+            "type": "output",
+            "name": "selection_predicates_emb"
+        }
+    ],
+    [
+        {
+            "type": "input",
+            "names": ["tree_structure_emb", "join_predicates_emb", "selection_predicates_emb"]
+        },
+        {
+            "type": "dense",
+            "size": 1024,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 512,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 256,
+            "activation": "tanh"
+        },
+        {
+            "type": "dense",
+            "size": 128,
+            "activation": "tanh"
+        },
+        {
+            "type": "output",
+            "name": "prediction"
+        }
+    ]
+]
