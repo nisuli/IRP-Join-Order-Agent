@@ -223,6 +223,11 @@ class Optimization_of_Join_Order_Sequence_Pattern(Environment):
         self.memory_actions = []
         self.step_curr = 0
 
+        # Ensure the query contains the original SQL string
+        if "original_query" not in self.query:
+            self.query["original_query"] = self.database.get_query_string(self.query["file"])
+        # print("Loaded Query:", self.query) 
+
         # self.pp.pprint(self.state_vector.query_ast)
         return self.state
 
@@ -289,6 +294,24 @@ class Optimization_of_Join_Order_Sequence_Pattern(Environment):
             self.state_vector.alias_to_relations,
             self.state_vector.aliases,
         )
+        # Measure execution time for baseline query (before optimization)
+        if "baseline_time" not in self.memory[self.query["file"]]:
+            if "original_query" in self.query:
+                baseline_time = self.database.get_execution_time(self.query["original_query"])
+            else:
+                print("Warning: Original query not found, using default query.")
+                baseline_time = float('inf')  # Or set a default behavior
+            self.memory[self.query["file"]]["baseline_time"] = baseline_time
+
+        # Measure execution time for optimized query
+        optimized_time = self.database.get_execution_time(constructed_query)
+        self.memory[self.query["file"]]["optimized_time"] = optimized_time
+
+        # Calculate execution time reduction
+        baseline_time = self.memory[self.query["file"]]["baseline_time"]
+        execution_time_reduction = (baseline_time - optimized_time) / baseline_time * 100
+        self.memory[self.query["file"]]["execution_time_reduction"] = execution_time_reduction
+        print(f"Execution Time Reduction: {execution_time_reduction:.2f}%")
         cost = self.database.get_reward(constructed_query, self.phase)
         self.memory[self.query["file"]]["costs"].append(cost)
         reward = 1 / cost * 100000
@@ -301,8 +324,9 @@ class Optimization_of_Join_Order_Sequence_Pattern(Environment):
         std = r.std()
         print("Mean: ", mean, " Std: ", std)
         reward = (reward - mean) / (std + 0.1)
-
         self.memory[self.query["file"]]["rewards"].append(reward)
+        self.memory[self.query["file"]]["join_order"] = final_ordering
+        self.memory[self.query["file"]]["query"] = constructed_query
         print("Cost: ", round(cost))
         return reward
 
@@ -389,3 +413,20 @@ class Optimization_of_Join_Order_Sequence_Pattern(Environment):
 
         # print("\n\nFinal Join Ordering: ", final_ordering)
         return final_ordering
+
+    def get_sql_query(self, join_order):
+        """
+        Convert the given join order to an SQL query.
+        Args:
+            join_order (list): List of table names or nested lists representing the join order.
+        Returns:
+            str: SQL query string.
+        """
+        return self.database.construct_query(
+            self.state_vector.query_ast,
+            join_order,
+            self.database.relations_attributes,
+            self.state_vector.joined_attrs,
+            self.state_vector.alias_to_relations,
+            self.state_vector.aliases,
+        )

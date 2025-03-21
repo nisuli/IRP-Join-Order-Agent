@@ -2,6 +2,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import division
+import math
 
 # Import classes from TensorForce library
 from tensorforce import TensorForceError
@@ -25,67 +26,40 @@ import json
 def make_args_parser():
     parser = argparse.ArgumentParser()
 
-    # Add arguments for agent configuration file, network specification file, number of episodes, groups, target group,
-    # incremental mode, maximum number of timesteps per episode, specific query to run, save agent to directory,
-    # restore agent from directory, output directory, testing mode, order queries by relations_num, save agent every x episodes, and select phase
-    parser.add_argument(
-        "-a",
-        "--agent-config",
-        default="config/ppo.json",
-        help="Agent configuration file",
-    )
-    parser.add_argument(
-        "-n",
-        "--network-spec",
-        default="config/complex-network.json",
-        help="Network specification file",
-    )
-    parser.add_argument(
-        "-e", "--episodes", type=int, default=800, help="Number of episodes"
-    )
-    parser.add_argument(
-        "-g",
-        "--groups",
-        type=int,
-        default=1,
-        help="Total groups of different number of relations",
-    )
-    parser.add_argument(
-        "-tg", "--target_group", type=int, default=4, help="A specific group"
-    )
-    parser.add_argument(
-        "-m", "--mode", type=str, default="round", help="Incremental Mode"
-    )
-    parser.add_argument(
-        "-ti",
-        "--max-timesteps",
-        type=int,
-        default=20,
-        help="Maximum number of timesteps per episode",
-    )
+    # Add arguments for agent configuration file, network specification file, etc.
+    parser.add_argument("-a", "--agent-config", default="config/ppo.json", help="Agent configuration file")
+    parser.add_argument("-n", "--network-spec", default="config/complex-network.json", help="Network specification file")
+    parser.add_argument("-e", "--episodes", type=int, default=800, help="Number of episodes")
+    parser.add_argument("-g", "--groups", type=int, default=1, help="Total groups of different number of relations")
+    parser.add_argument("-tg", "--target_group", type=int, default=4, help="A specific group")
+    parser.add_argument("-m", "--mode", type=str, default="round", help="Incremental Mode")
+    parser.add_argument("-ti", "--max-timesteps", type=int, default=20, help="Maximum number of timesteps per episode")
     parser.add_argument("-q", "--query", default="", help="Run specific query")
     parser.add_argument("-s", "--save_agent", default="", help="Save agent to this dir")
     parser.add_argument("-r", "--restore_agent", default="", help="Restore Agent from this dir")
-    parser.add_argument("-o", "--outputs", default="./outputs/", help="Restore Agent from this dir")
-    parser.add_argument(
-        "-t",
-        "--testing",
-        action="store_true",
-        default=False,
-        help="Test agent without learning.",
-    )
-    parser.add_argument('-all', '--run_all', action='store_true', default=False, help="Order queries by relations_num")
-    parser.add_argument(
-        "-se",
-        "--save_episodes",
-        type=int,
-        default=100,
-        help="Save agent every x episodes",
-    )
+    parser.add_argument("-o", "--outputs", default="./outputs/", help="Output directory")
+    parser.add_argument("-t", "--testing", action="store_true", default=False, help="Test agent without learning.")
+    parser.add_argument("-all", "--run_all", action="store_true", default=False, help="Order queries by relations_num")
+    parser.add_argument("-se", "--save_episodes", type=int, default=100, help="Save agent every x episodes")
     parser.add_argument("-p", "--phase", help="Select phase (1 or 2)", default=1)
 
     return parser.parse_args()
 
+# Function to save the optimized query, quality of plan, and reward
+def save_optimized_query(output_path, query, quality_of_plan, reward):
+    """
+    Saves the optimized query and evaluation metrics to a JSON file.
+    """
+    result_data = {
+        "optimized_query": query,
+        "quality_of_plan": quality_of_plan,
+        "reward": reward,
+    }
+
+    # Save the JSON file
+    with open(output_path, "w") as file:
+        json.dump(result_data, file, indent=4)
+    print(f"Optimized query and evaluation metrics saved to: {output_path}")
 
 # Function to print out the configuration settings
 def print_config(args):
@@ -166,11 +140,66 @@ def main():
 
     def episode_finished(r):
         if r.episode % report_episodes == 0:
+            print(f"Episode: {r.episode}, Reward: {r.episode_rewards[-1]}")
             print('Directory of save agent model: ' + str(args.save_agent))
             print('Is this a testing??? ---> ' + str(args.testing))
             print('Number of episodes: ' + str(r.episode))
             print('Total desired episodes: ' + str(args.episodes))
             print('Save the model after this number: ' + str(args.save_episodes))
+            
+            # Extract the best join order and cost from the memory
+            min_cost = float('inf')
+            best_join_order = None
+            best_query = None
+
+            for query_file, details in memory.items():
+                current_cost = min(details["costs"])  # Minimum cost for the query
+                print(f"Old Cost: {current_cost} | Opt Cost: {min_cost}")
+                if current_cost < min_cost:
+                    min_cost = current_cost
+                    best_join_order = details.get("join_order")  # Best join order
+                    best_query = details.get("query")  # Best query
+
+            # Print execution time results
+            for query_file, details in memory.items():
+                baseline_time = details.get("baseline_time", None)
+                optimized_time = details.get("optimized_time", None)
+                reduction = details.get("execution_time_reduction", None)
+                if baseline_time and optimized_time:
+                    print(f"Query: {query_file}")
+                    print(f"Baseline Execution Time: {baseline_time:.2f} ms")
+                    print(f"Optimized Execution Time: {optimized_time:.2f} ms")
+                    print(f"Evaluation Metric #1 | Execution Time Reduction: {reduction:.2f}%")
+                    
+            if best_join_order and best_query:
+                print(f"Optimized Join Order for Minimum Cost ({min_cost}): {best_join_order}")
+                print(f"Episode: {r.episode}, Reward: {r.episode_rewards[-1]}")
+
+                # Extract costs from memory
+                for query_file, details in memory.items():
+                    costs = np.array(details["costs"])  # Observed costs during the episode
+                    min_val = min(costs) if len(costs) > 0 else float('inf')  # Optimized cost
+                    max_val = max(costs) if len(costs) > 0 else float('inf')  # Unoptimized cost
+
+                    # Calculate Quality of Plan
+                    if max_val > 0:
+                        quality_of_plan = (min_val / max_val) * 100
+                    else:
+                        quality_of_plan = 0  # Default if max_val is invalid
+
+
+                print(f"Unoptimizaed Cost: {max_val}")
+                print(f"Optimized Cost: {min_val}")
+                print(f"Quality of Plan: {quality_of_plan}")
+                            
+                reward = r.episode_rewards[-1]
+
+                # Save to file
+                output_path = os.path.join(args.outputs, "optimized_query_results.json")
+                save_optimized_query(output_path, best_query, quality_of_plan, reward)
+
+
+            # Save the model if required            
             if args.save_agent != "" and args.testing is False and r.episode >= args.save_episodes:
                 save_dir = os.path.dirname(args.save_agent)
                 if not os.path.isdir(save_dir):
@@ -191,6 +220,45 @@ def main():
                     sum(r.episode_rewards[-100:]) / 100
                 )
             )
+            # Extract the best join order and cost from the memory
+            min_cost = float('inf')
+            best_join_order = None
+            best_query = None
+
+            for query_file, details in memory.items():
+                current_cost = min(details["costs"])  # Minimum cost for the query
+                if current_cost < min_cost:
+                    min_cost = current_cost
+                    best_join_order = details.get("join_order")  # Best join order
+                    best_query = details.get("query")  # Best query
+
+            # Output the optimized query and join order
+            if best_join_order and best_query:
+                print(f"Optimized Join Order for Minimum Cost ({min_cost}): {best_join_order}")
+
+                # Extract the unoptimized cost and optimized cost
+                optimized_cost = min_val  # Min observed cost
+                unoptimized_cost = max_val  # Max observed cost
+
+                # Calculate Quality of Plan
+                if unoptimized_cost > 0:
+                    quality_of_plan = (optimized_cost / unoptimized_cost) * 100
+                else:
+                    quality_of_plan = 0  # Default to 0 if unoptimized_cost is not valid
+
+                print(f"Unoptimized Cost: {unoptimized_cost}")
+                print(f"Optimized Cost: {optimized_cost}")
+                print(f"Quality of Plan: {quality_of_plan:.2f}%")
+
+                # Extract reward from the last episode
+                reward = r.episode_rewards[-1]
+
+                # Save results to a JSON file
+                output_path = os.path.join(args.outputs, "optimized_query_results.json")
+                save_optimized_query(output_path, best_query, quality_of_plan, reward)
+
+            print(f"Quality of Plan: {quality_of_plan:.2f}%")
+            print(f"Reward: {reward}")
         return True
     ############################## Finished ##################################
 
@@ -323,3 +391,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+    # Path to the optimized query file
+    optimized_query_file = "./outputs/optimized_query.sql"
+
+    # Check if the optimized query file exists
+    if os.path.exists(optimized_query_file):
+        # Read and display the optimized query
+        with open(optimized_query_file, "r") as f:
+            optimized_query = f.read()
+            # print(f"\nFinal Optimized Query:\n{optimized_query}")
+    else:
+        print("Optimized query file not found.")

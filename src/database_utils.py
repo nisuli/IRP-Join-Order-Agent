@@ -168,6 +168,7 @@ def get_where_clause(query_ast, relations_to_alias, alias):
         "lte": "<=",
         "like": "LIKE",
         "nlike": "NOT LIKE",
+        "not_like": "NOT LIKE",
         "in": "IN",
         "between": "BETWEEN"
     }  # to be filled with other possible values
