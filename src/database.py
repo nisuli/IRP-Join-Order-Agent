@@ -1,3 +1,4 @@
+import os
 import config.database as creds
 import psycopg2
 import pprint
@@ -12,6 +13,8 @@ class Database:
         self.conn = self.connect()
         self.counter = 0
         self.aliases = {}
+        self.query_directory = os.path.join(os.path.dirname(__file__), '../queries', '../queries/queries-raw')
+
 
         # Build database related info
         # - tables,
@@ -37,7 +40,7 @@ class Database:
                 "host="
                 + creds.PGHOST
                 + " port="
-                + "5432"
+                + "5431"
                 + " dbname="
                 + creds.PGDATABASE
                 + " user="
@@ -465,3 +468,41 @@ class Database:
         for key in d:
             print(str(key) + " -> " + str(d[key]))
         print("\n")
+
+    def get_execution_time(self, query):
+        """
+        Measure execution time for a given query using PostgreSQL's EXPLAIN (ANALYZE).
+        Args:
+            query (str): SQL query to execute.
+        Returns:
+            float: Execution time in milliseconds.
+        """
+        try:
+            # Connect to PostgreSQL and execute the query
+            with self.connection.cursor() as cursor:
+                cursor.execute(f"EXPLAIN (ANALYZE) {query}")
+                result = cursor.fetchall()
+
+                # Parse the execution time from the result
+                for row in result:
+                    if "Execution Time" in row[0]:
+                        execution_time = float(row[0].split(":")[1].strip().split(" ")[0])
+                        return execution_time
+        except Exception as e:
+            print(f"Error measuring execution time: {e}")
+            return float('inf')
+
+    def get_query_string(self, query_file):
+        """
+        Retrieve the original SQL query string for a given query file.
+        Args:
+            query_file (str): The file name of the query.
+        Returns:
+            str: SQL query string.
+        """
+        try:
+            with open(os.path.join(self.query_directory, query_file), 'r') as file:
+                query_string = file.read()
+            return query_string
+        except FileNotFoundError:
+            raise Exception(f"Query file not found: {query_file}")
